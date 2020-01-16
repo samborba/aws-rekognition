@@ -19,5 +19,4 @@ def loop():
         return
 
 if __name__ == '__main__':
-    file_name = datetime.now().strftime('%d-%m-%H:%M:%S_logs.txt')
     loop()

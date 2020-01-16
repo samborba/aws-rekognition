@@ -116,7 +116,7 @@ $ ./java-install-script
 ### Setting it up and running
 1. Populate the **.env.example** file according to the AWS data you set up in [the previous steps](#aws-config).
 2. Rename the **.env.example** file to **.env**.
-3. Move SDK-Generated folder to project folder.
+3. Move SDK-Generated folder (amazon-kinesis-video-streams-producer-sdk-cpp) to project folder.
 4. Open a terminal in the **aws-rekognition/src** directory and run the **producer.py** file (those commands should open your webcam application).
 ```console
 (env)$ cd aws-rekognition/src/
