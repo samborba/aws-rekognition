@@ -18,7 +18,7 @@ Items in this checklist are required for the development environment:
 	 - Amazon Rekognition
 	 - Amazon Kinesis Video Streams
 	 - Amazon Kinesis Data Streams
-4. Make sure you have one of selected the regions that have access to the services mentioned:
+4. <a name = "aws-config"></a>Make sure you have one of selected the regions that have access to the services mentioned:
 	 - us-east-1
 	 - us-west-2
 	 - us-west-1
@@ -114,7 +114,7 @@ $ ./java-install-script
 4. Vritualenv configured and with dependencies installed
 
 ### Setting it up and running
-1. Populate the **.env.example** file according to the AWS data you set up in [the previous steps](https://github.com/samborba/aws-rekognition#preparing-aws-nvironment).
+1. Populate the **.env.example** file according to the AWS data you set up in [the previous steps](#aws-config).
 2. Rename the **.env.example** file to **.env**.
 3. Move SDK-Generated folder to project folder.
 4. Open a terminal in the **aws-rekognition/src** directory and run the **producer.py** file (those commands should open your webcam application).
