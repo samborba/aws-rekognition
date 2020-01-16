@@ -25,7 +25,7 @@ Items in this checklist are required for the development environment:
 5. Clone this GitHub repository. Install all dependencies (using the environment pip we created in **step 2**) that are described in the "**requirements.txt**" file which is inside of the project.
  
 
-## Preparing AWS nvironment
+## Preparing AWS environment
 Right after preparing the environment for development, we should create Amazon services:
 
  1. Create an IAM service role to give Amazon Rekognition Video access to your Kinesis video streams and your Kinesis data streams. Note the ARN,  we will need this later.
@@ -46,7 +46,7 @@ Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kin
 
 This project was developed with a focus on using the operating system for execution and coding. If you are using another OS, I suggest following the [installation guide](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp#build-and-install-kinesis-video-streams-producer-sdk-and-sample-applications) for the OS of your interest.
 
-### Pre-requisites:
+### Pre-requisites
 - The following Ubuntu platforms are supported.
 ```console
     Ubuntu 16
@@ -107,7 +107,30 @@ $ ./java-install-script
 
 ## Setting up project code
 
-You can delete the current file by clicking the **Remove** button in the file explorer. The file will be moved into the **Trash** folder and automatically deleted after 7 days of inactivity.
+### Pre-requisites
+1. Clone project
+2. AWS Environment Configured
+3. Producer SDK configured
+4. Vritualenv configured and with dependencies installed
+
+### Setting it up and running
+1. Populate the **.env.example** file according to the AWS data you set up in [the previous steps](https://github.com/samborba/aws-rekognition#preparing-aws-nvironment).
+2. Rename the **.env.example** file to **.env**.
+3. Move SDK-Generated folder to project folder.
+4. Open a terminal in the **aws-rekognition/src** directory and run the **producer.py** file (those commands should open your webcam application).
+```console
+(env)$ cd aws-rekognition/src/
+(env)$ python producer.py
+```
+5. Open another terminal and run **consumer.py** file.
+```console
+(env)$ python consumer.py
+```
+6. If you want to stop all process, just press **Ctrl + Shift + C**.
+
+  
+To view the video being streamed in real time, open your Kinesis Video Streams, and to monitor incoming data traffic, open your Kinesis Data Streams.
 
 ## Reference
-- [Amazon Rekognition Deveoler Guide](https://docs.aws.amazon.com/rekognition/latest/dg/rekognition-dg.pdf)
+- [Amazon Rekognition Developer Guide](https://docs.aws.amazon.com/rekognition/latest/dg/rekognition-dg.pdf);
+- [Instructions for installing Kinesis Video Streams Producer SDK on Linux (Ubuntu, Raspberry PI)](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp/blob/master/install-instructions-linux.md);
