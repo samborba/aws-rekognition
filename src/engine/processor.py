@@ -1,10 +1,17 @@
 import logging
 import os
+from dotenv import load_dotenv
 import boto3
 
-_AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY_ID')
-_AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-_AWS_REGION_KEY = os.environ.get('AWS_REGION_KEY')
+load_dotenv()
+
+_AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
+_AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+_AWS_REGION_KEY = os.getenv('REGION_NAME')
+_AWS_KVS_ROLE_ARN = os.getenv('AWS_KVS_ROLE_ARN')
+
+_KINESISVIDEO_ARN = os.getenv('AWS_KINESISVIDEO_ARN')
+_KINESISDATA_ARN = os.getenv('AWS_DATASTREAMS_ARN')
 
 
 class Processor:
@@ -13,13 +20,9 @@ class Processor:
     Ele é responsável por fazer o intermédio entre o Kinesis Video Streams
     e Kinesis Data Streams.
     """
-    def __init__(self, input_location, output_location,
-                 name, collection_id, rolearn):
-        self.input_location = input_location
-        self.output_location = output_location
+    def __init__(self, name, collection_id):
         self.name = name
         self.collection_id = collection_id
-        self.rolearn = rolearn
 
         session = boto3.Session(aws_access_key_id=_AWS_ACCESS_KEY, aws_secret_access_key=_AWS_SECRET_ACCESS_KEY,
                                 region_name=_AWS_REGION_KEY)
@@ -29,17 +32,17 @@ class Processor:
     def create(self):
         """Criação do processor."""
         try:
-            logging.info('Criando %s processor.', self.name)
+            print(f'Criando {self.name} processor.')
 
             self._rekognition_client.create_stream_processor(
                 Input={
                     'KinesisVideoStream': {
-                        'Arn': self.input_location
+                        'Arn': _KINESISVIDEO_ARN
                     }
                 },
                 Output={
                     'KinesisDataStream': {
-                        'Arn': self.output_location
+                        'Arn': _KINESISDATA_ARN
                     }
                 },
                 Name=self.name,
@@ -49,50 +52,47 @@ class Processor:
                         'FaceMatchThreshold': 70.0
                     }
                 },
-                RoleArn=self.rolearn
+                RoleArn=_AWS_KVS_ROLE_ARN
             )
-            logging.info('Processaor %s criado com Sucesso!', self.name)
+            print(f'Processaor {self.name} criado com Sucesso!')
         except Exception as error:
-            logging.error(error)
+            print(error)
 
     def initialize(self):
         """
         Inicialização do processor.
         """
         try:
-            logging.info('Inicializando %s processor.', self.name)
-
+            print(f'Inicializando {self.name} processor.')
             self._rekognition_client.start_stream_processor(Name=self.name)
 
-            logging.info('Incializado com sucesso!')
+            print('Incializado com sucesso!')
         except Exception as error:
-            logging.error(error)
+            print(error)
 
     def stop(self):
         """
         Para o processor.
         """
         try:
-            logging.info('Parando %s processor', self.name)
-
+            print(f'Parando {self.name} processor.')
             self._rekognition_client.stop_stream_processor(Name=self.name)
 
-            logging.info('Parado com sucesso')
+            print('Parado com sucesso')
         except Exception as error:
-            logging.error(error)
+            print(error)
 
     def delete(self):
         """
         Deleta o processor.
         """
         try:
-            logging.info('Deletando %s processor', self.name)
-
+            print(f'Deletando {self.name} processor.')
             self._rekognition_client.delete_stream_processor(Name=self.name)
 
-            logging.info('Deletado com sucesso.')
+            print('Deletado com sucesso.')
         except Exception as error:
-            logging.error(error)
+            print(error)
 
     def status(self):
         """
@@ -104,4 +104,4 @@ class Processor:
             response = self._rekognition_client.delete_stream_processor(Name=self.name)
             return response.get('Status')
         except Exception as error:
-            logging.error(error)
+            print(error)

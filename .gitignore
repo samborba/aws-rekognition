@@ -1,0 +1,11 @@
+ 
+# Distribution / packaging
+env/
+.vscode
+
+# Dev-Configuration
+settings.json
+.pylintrc
+
+#Others
+.env
