@@ -49,7 +49,7 @@ Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kin
 - (Windows) Due to the complexity of using the webcam in Windows, you must configure an IP address for your camera to do [RTSP](https://pt.wikipedia.org/wiki/RTSP).
 
 ###  Install
-- Check Linux or Windows tutorial.
+- Check Linux [Linux ](https://github.com/samborba/aws-rekognition/tree/master/docker_native_scripts/amazonlinux) or [Windows ](https://github.com/samborba/aws-rekognition/tree/master/docker_native_scripts/windows)tutorial.
 
 ## Setting up project code
 
