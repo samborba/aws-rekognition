@@ -109,31 +109,29 @@ class CollectionManager:
             os.mkdir(resources_folder)
         
         os.chdir(resources_folder)
-        try:
-            if photo is not None:
-                try:
-                    image = open(f'{photo}.jpg', 'rb')
-                    self._rekognition_client.index_face(
-                        Image={
-                            'Bytes': image.read()
-                        },
-                        CollectionId=collection_id,
-                        ExternalImageId=photo
-                    )
-                except FileNotFoundError as error:
-                    print(error)
-            else:
-                for image in glob("*.jpg"):
-                    person = image.rsplit('.', maxsplit=1)
-                    image = open(photo, 'rb')
-                    self._rekognition_client.index_face(
-                        Image={
-                            'Bytes': image.read()
-                        },
-                        CollectionId=collection_id,
-                        ExternalImageId=person
-                    )
-                except FileNotFoundError as error:
-                    print(error)
-        except Exception as error:
-            print(error)
+
+        if photo is not None:
+            try:
+                image = open(f'{photo}.jpg', 'rb')
+                self._rekognition_client.index_face(
+                    Image={
+                        'Bytes': image.read()
+                    },
+                    CollectionId=collection_id,
+                    ExternalImageId=photo
+                )
+            except FileNotFoundError as error:
+                print(error)
+        else:
+            for image in glob("*.jpg"):
+                person = image.rsplit('.', maxsplit=1)
+                image = open(photo, 'rb')
+                self._rekognition_client.index_face(
+                    Image={
+                        'Bytes': image.read()
+                    },
+                    CollectionId=collection_id,
+                    ExternalImageId=person
+                )
+            except FileNotFoundError as error:
+                print(error)
