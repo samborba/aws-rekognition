@@ -3,8 +3,8 @@ import json
 from dotenv import load_dotenv
 import boto3
 
-from engine.processor import Processor
 from engine.collection import CollectionManager
+from engine.processor import Processor
 
 load_dotenv()
 
@@ -63,14 +63,14 @@ def start_analysis(collection_id=COLLECTION_ID):
             shardIterator = records['NextShardIterator']
 
             if len(records['Records'] > 0):
-                data = json.loads(recs['Records'][0]['Data'])
+                data = json.loads(records['Records'][0]['Data'])
                 if len(data['FaceSearchResponse']) > 0:
                     for faceSearchResponse in data['faceSearchResponse']:
                         if len(faceSearchResponse['MatchedFaces']) > 0:
                             for face in faceSearchResponse['MatchedFaces']:
                                 name = face['Face']['ExternalImageId']
                                 confidence = face['Face']['Confidence']
-                                print(f'Rosto reconhecido: {nome}\nConfiança: {confidence}')
+                                print(f'Rosto reconhecido: {name}\nConfiança: {confidence}')
 
     except KeyboardInterrupt:
         print('Parando análise...')
