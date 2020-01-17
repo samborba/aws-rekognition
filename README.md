@@ -58,12 +58,13 @@ Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kin
 2. AWS Environment Configured
 3. Docker Producer SDK configured.
 4. Vritualenv configured and with dependencies installed
+5. If there is no folder named “**resources**” inside **~/aws-rekognition/src/**, create it and store it with a photo of yourself to be recognized later.
 
 ### Setting it up and running
 1. Populate the **.env.example** file according to the AWS data you set up in [the previous steps](#aws-config).
 2. Rename the **.env.example** file to **.env**.
 3. Run Dockerfile to start producer.
-4. Open a terminal in **src/** and run **consumer.py** file.
+4. Open a terminal in **~/aws-rekognition/src/** and run **consumer.py** file.
 ```console
 (env)$ python consumer.py
 ```
