@@ -1,5 +1,7 @@
 import os
+import json
 from dotenv import load_dotenv
+import boto3
 
 from engine.processor import Processor
 from engine.collection import CollectionManager
@@ -16,7 +18,7 @@ AWS_DATASTREAMS_ARN = os.getenv('AWS_DATASTREAMS_NAME')
 AWS_KVS_ROLE_ARN = os.getenv('AWS_KVS_ROLE_ARN')
 
 
-def building_engines(collection_id=COLLECTION_ID):
+def start_analysis(collection_id=COLLECTION_ID):
     """
     Cria o processor responsável por manter o intermédio entre o Kinesis Video Stream e
     o Kinesis Data Streams, e cria a collection que irá armazenar e indexar as faces
@@ -47,20 +49,37 @@ def building_engines(collection_id=COLLECTION_ID):
     except Exception as error:
         print(error)
 
+    kinesis_data_streams = boto3.client('kinesis')
 
-def consuming_analysis():
-    """
-    Consome a saída de dados gerados pelo Kinesis Data Streams.
-    """
-    # 1. Configurar boto3
-    # 2. Consumir ánalise
-    # 3. Assim que a ánalise for parada, parar processor e exclui-lo
-    pass
+    shardId = kinesis_data_streams.describe_stream(
+        StreamName=AWS_DATASTREAMS_ARN)['StreamDescription']['Shards'][0]['ShardId']
+    shardIterator = kinesis_data_streams.get_shard_iterator(StreamName=AWS_DATASTREAMS_ARN,
+                                                            ShardId=shardId,
+                                                            ShardIteratorType='TRIM_HORIZON')['ShardIterator']
+
+    try:
+        while True:
+            records = kinesis_data_streams.get_records(ShardIterator=shardIterator, limit=1)
+            shardIterator = records['NextShardIterator']
+
+            if len(records['Records'] > 0):
+                data = json.loads(recs['Records'][0]['Data'])
+                if len(data['FaceSearchResponse']) > 0:
+                    for faceSearchResponse in data['faceSearchResponse']:
+                        if len(faceSearchResponse['MatchedFaces']) > 0:
+                            for face in faceSearchResponse['MatchedFaces']:
+                                name = face['Face']['ExternalImageId']
+                                confidence = face['Face']['Confidence']
+                                print(f'Rosto reconhecido: {nome}\nConfiança: {confidence}')
+
+    except KeyboardInterrupt:
+        print('Parando análise...')
+        processor.stop()
+        processor.delete()
 
 
 def main():
-    building_engines()
-    consuming_analysis()
+    start_analysis()
 
 
 if __name__ == "__main__":
