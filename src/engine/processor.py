@@ -98,7 +98,7 @@ class Processor:
         """
         Retorna o status do Precessor:
         STOPPED | STARTING | RUNNING | FAILED | STOPPING'.
-        :return: String retorna htpp code.
+        :return: String retorna status do processor.
         """
         try:
             response = self._rekognition_client.delete_stream_processor(Name=self.name)

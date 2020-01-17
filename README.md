@@ -38,95 +38,37 @@ Right after preparing the environment for development, we should create Amazon s
  2. Create a [Kinesis Video Streams](https://docs.aws.amazon.com/kinesisvideostreams/latest/dg/gs-createstream.html) and write down the generated ARN.
  3. Create a [Kinesis Data Streams](https://docs.aws.amazon.com/streams/latest/dev/introduction.html) and write down the generated ARN.
 
-## Installing Kinesis Video Streams Producer SDK
+## Preparing Kinesis Video Streams Producer SDK
 ### Introduction
 A Kinesis Video Streams Producer is any application that makes it easy to securely connects to a video stream, and reliably publishes video and other media data to Kinesis Video Streams.
 
-Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-java) and [C ++](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp). In this example, we will be using the C ++ SDK.
+Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-java) and [C ++](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp). In this example, we will be using the Producer C++ SDK with Docker.
 
-This project was developed with a focus on using the operating system for execution and coding. If you are using another OS, I suggest following the [installation guide](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp#build-and-install-kinesis-video-streams-producer-sdk-and-sample-applications) for the OS of your interest.
+### Pre-requisite:
+- Docker must be installed and configured . Check official website of how to install docker using [Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [Windows](https://docs.docker.com/docker-for-windows/)
+- (Windows) Due to the complexity of using the webcam in Windows, you must configure an IP address for your camera to do [RTSP](https://pt.wikipedia.org/wiki/RTSP).
 
-### Pre-requisites
-- The following Ubuntu platforms are supported.
-```console
-    Ubuntu 16
-    Ubuntu 17
-    Ubuntu 18
-    Raspberry Raspbian
-```
-- [Git](https://git-scm.com/downloads) is required for checking out the Kinesis Video Streams SDK.
-- In order to install the build tools, an account with administrator privileges is required.
-
-### Installation
-1. Install **cmake**:
-```console
-$ sudo apt-get update
-$ sudo apt-get install cmake
-```
-2. Install **g++**:
-```console
-$ sudo apt-get install g++
-$ g++ version
-Copyright (C) 2017 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
-3. Install Producer Library Dependencies:
-```console
-$ sudo apt-get update
-$ sudo apt-get install libssl-dev libcurl4-openssl-dev liblog4cplus-1.1-9 liblog4cplus-dev
-```
-4. Install GStreamer Artifact Dependencies:
-```console
-$ sudo apt-get update
-$ sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base-apps
-$ sudo apt-get install gstreamer1.0-plugins-bad gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tools
-```
-5. Run the build script: (within  `kinesis-video-native-build`  folder)
-```console
-./min-install-script
-```
-6. Install  **Open JDK**  (if you are building the JNI library):
-```console
-$ sudo apt-get install openjdk-8-jdk
-$ java -showversion
-openjdk version "1.8.0_151"
-OpenJDK Runtime Environment (build 1.8.0_151-8u151-b12-0ubuntu0.17.10.2-b12)
-OpenJDK 64-Bit Server VM (build 25.151-b12, mixed mode)
-```
-
-7. Set  **JAVA_HOME**  environment variable:
-```console
-$ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/
-```
-
-8. Run the build script: (within  `kinesis-video-native-build`  folder)
-```console
-$ ./java-install-script
-```
+###  Install
+- Check Linux [Linux ](https://github.com/samborba/aws-rekognition/tree/master/docker_native_scripts/amazonlinux) or [Windows ](https://github.com/samborba/aws-rekognition/tree/master/docker_native_scripts/windows)tutorial.
 
 ## Setting up project code
 
 ### Pre-requisites
 1. Clone project
 2. AWS Environment Configured
-3. Producer SDK configured
+3. Docker Producer SDK configured.
 4. Vritualenv configured and with dependencies installed
+5. If there is no folder named “**resources**” inside **~/aws-rekognition/src/**, create it and store it with a photo of yourself to be recognized later.
 
 ### Setting it up and running
 1. Populate the **.env.example** file according to the AWS data you set up in [the previous steps](#aws-config).
 2. Rename the **.env.example** file to **.env**.
-3. Move SDK-Generated folder (amazon-kinesis-video-streams-producer-sdk-cpp) to project folder.
-4. Open a terminal in the **aws-rekognition/src** directory and run the **producer.py** file (those commands should open your webcam application).
-```console
-(env)$ cd aws-rekognition/src/
-(env)$ python producer.py
-```
-5. Open another terminal and run **consumer.py** file.
+3. Run Dockerfile to start producer.
+4. Open a terminal in **~/aws-rekognition/src/** and run **consumer.py** file.
 ```console
 (env)$ python consumer.py
 ```
-6. If you want to stop all process, just press **Ctrl + Shift + C**.
+5. If you want to stop all process, just press **Ctrl + Shift + C**.
 
   
 To view the video being streamed in real time, open your Kinesis Video Streams, and to monitor incoming data traffic, open your Kinesis Data Streams.

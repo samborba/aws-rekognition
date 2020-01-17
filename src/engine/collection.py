@@ -1,5 +1,6 @@
 import logging
 import os
+from glob import glob
 from dotenv import load_dotenv
 import boto3
 
@@ -26,12 +27,14 @@ class CollectionManager:
         # Cria conexão com o rekognition
         self._rekognition_client = r_client
 
-        # Cria conexão com o S3
+        # Cria conexão com o S3 - Será uútil apenas para indexação de faces
         self._s3_client = s_client
 
     def create(self, collection_id):
         """
         Cria uma nova collection.
+
+        :param collection_id: String identificação da collection.
         """
         try:
             print(f'Criando {collection_id} collection.')
@@ -49,6 +52,7 @@ class CollectionManager:
     def remove_collection(self, collection_id):
         """
         Remove collection.
+    
         :param collection_id: String CollectionId referente à collection que será removida.
         """
         try:
@@ -61,9 +65,24 @@ class CollectionManager:
         except Exception as error:
             print(error)
 
+    def get_info(self, collection_id):
+        """
+        Busca informações da collection.
+
+        :return: Dict inforamções sobre a collection.
+        """
+        try:
+            response = self._rekognition_client.describe_collection(
+                CollectionId = collection_id
+            )
+            return response
+        except Exception as error:
+            print(error)
+
     def get_list(self):
         """
         Consulta todas as collections já criadas.
+
         :return: List lista de collectios da AWS.
         """
         try:
@@ -75,5 +94,44 @@ class CollectionManager:
         except Exception as error:
             print(error)
 
-    def index_face(self, collection, photo):
-        pass
+    def index_face(self, collection_id, photo=None):
+        """
+        Fazer indexação das faces em uma collection.
+        É necessário colocar o nome da pessoa que está na foto como o nome da imagem.
+
+        :param collection_id: String identificação da collection.
+        :param photo: String caso "photo" receba True, fará indexação de apenas uma face,
+        caso contrário, irá fazer indexação de todas as faces presente na pasta Resources.
+        """
+        resources_folder = '../resources'
+
+        if not os.path.exists(resources_folder):
+            os.mkdir(resources_folder)
+        
+        os.chdir(resources_folder)
+
+        if photo is not None:
+            try:
+                image = open(f'{photo}.jpg', 'rb')
+                self._rekognition_client.index_face(
+                    Image={
+                        'Bytes': image.read()
+                    },
+                    CollectionId=collection_id,
+                    ExternalImageId=photo
+                )
+            except FileNotFoundError as error:
+                print(error)
+        else:
+            for image in glob("*.jpg"):
+                person = image.rsplit('.', maxsplit=1)
+                image = open(photo, 'rb')
+                self._rekognition_client.index_face(
+                    Image={
+                        'Bytes': image.read()
+                    },
+                    CollectionId=collection_id,
+                    ExternalImageId=person
+                )
+            except FileNotFoundError as error:
+                print(error)
