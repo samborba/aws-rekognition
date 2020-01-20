@@ -73,6 +73,11 @@ Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kin
   
 To view the video being streamed in real time, open your Kinesis Video Streams, and to monitor incoming data traffic, open your Kinesis Data Streams.
 
-## Reference
+### Notes
+- You can integrate any producer (C ++ SDK, Java SDK, GStreamer plugin or OpenCV lib) in this project, the focus is to consume the data coming from Kinesis Data Streams, which consequently collects Kinesis Video Streams.
+- Because it is an operating system that can sometimes bring certain limitations at the time of development, perhaps you should put more effort into working with the webcam on Windows.
+- At consumer.py, we are only consuming responses from already known faces, if you want additional information about the environment, the unknown face, etc., you must change the code to suit your interests
+
+### Reference
 - [Amazon Rekognition Developer Guide](https://docs.aws.amazon.com/rekognition/latest/dg/rekognition-dg.pdf);
 - [Instructions for installing Kinesis Video Streams Producer SDK on Linux (Ubuntu, Raspberry PI)](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp/blob/master/install-instructions-linux.md);
