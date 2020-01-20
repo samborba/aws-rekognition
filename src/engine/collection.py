@@ -123,15 +123,16 @@ class CollectionManager:
             except FileNotFoundError as error:
                 print(error)
         else:
-            for image in glob("*.jpg"):
-                person = image.rsplit('.', maxsplit=1)
-                image = open(photo, 'rb')
-                self._rekognition_client.index_face(
-                    Image={
-                        'Bytes': image.read()
-                    },
-                    CollectionId=collection_id,
-                    ExternalImageId=person
-                )
+            try:
+                for image in glob("*.jpg"):
+                    person = image.rsplit('.', maxsplit=1)
+                    image = open(photo, 'rb')
+                    self._rekognition_client.index_face(
+                        Image={
+                            'Bytes': image.read()
+                        },
+                        CollectionId=collection_id,
+                        ExternalImageId=person
+                    )
             except FileNotFoundError as error:
                 print(error)
