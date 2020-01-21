@@ -3,7 +3,7 @@
 ## Introduction
 The purpose of this project is to demonstrate how the use of deep learning/machine learning (applied in image and video) features offered by **AWS** works.
 
-With this prototype, you'll be able to setup what is needed to run real-time video capture and analyze it using advanced tools.
+With this prototype, you'll be able to setup what is needed to run real-time video capture and analyze it using advanced tools. Please dont forget to read the [**Note**](#note) section.
 
 Here's the prototype's conceptual architecture:
 ![enter image description here](https://d1.awsstatic.com/re19/KVS_WebRTC/product-page-diagram_Kinesis-video-streams_how-it-works_01.cb5682fffec40aed239111f7454a586b31d6e680.png)
@@ -74,13 +74,14 @@ Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kin
 
 To view the video being streamed in real time, open your Kinesis Video Streams, and to monitor incoming data traffic, open your Kinesis Data Streams.
 
-### Notes
+### <a name = "notes"></a>Notes
 - You can integrate any producer (C++ SDK, Java SDK, GStreamer plugin, OpenCV, etc) in this project, the focus is to consume the data coming from Kinesis Data Streams.
 - Because it is an operating system that can sometimes bring certain limitations at the time of development, perhaps you should put more effort into working with the webcam on Windows.
 - At consumer.py, we are only consuming responses from already known faces, if you want additional information about the environment, the unknown face, etc, you must change the code to suit your interests.
 - Every time you enter the bash of the Linux container you created, you must run the command ```./install-script```, as the GStreamer files are deleted every time you leave the container.
 - Take a look at the LiveReporter app for [iPhone](https://apps.apple.com/app/live-reporter-security-camera/id996017825) and [Android](https://play.google.com/store/apps/details?id=net.kzkysdjpn.live_reporter), this app offers RTSP connection via smartphone camera and it may work (or not).
 - All the Dockerfiles may be outdated any time, feel free to change the code, but do not change the dependencies.
+- Webcam that is acting as producer and the computer that is with the docker must be on the same internet network.
 
 ### Reference
 - [Amazon Rekognition Developer Guide](https://docs.aws.amazon.com/rekognition/latest/dg/rekognition-dg.pdf);
