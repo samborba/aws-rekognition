@@ -74,8 +74,8 @@ Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kin
 
 To view the video being streamed in real time, open your Kinesis Video Streams, and to monitor incoming data traffic, open your Kinesis Data Streams.
 
-### <a name = "notes"></a>Notes
-- You can integrate any producer (C++ SDK, Java SDK, GStreamer plugin, OpenCV, etc) in this project, the focus is to consume the data coming from Kinesis Data Streams.
+### Notes
+- <a name = "note"></a>You can integrate any producer (C++ SDK, Java SDK, GStreamer plugin, OpenCV, etc) in this project, the focus is to consume the data coming from Kinesis Data Streams.
 - Because it is an operating system that can sometimes bring certain limitations at the time of development, perhaps you should put more effort into working with the webcam on Windows.
 - At consumer.py, we are only consuming responses from already known faces, if you want additional information about the environment, the unknown face, etc, you must change the code to suit your interests.
 - Every time you enter the bash of the Linux container you created, you must run the command ```./install-script```, as the GStreamer files are deleted every time you leave the container.
