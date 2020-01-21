@@ -30,8 +30,8 @@ Right after preparing the environment for development, we should create Amazon s
 
  1. Create an IAM service role to give Amazon Rekognition Video access to your Kinesis video streams and your Kinesis data streams. Note the ARN,  we will need this later.
 	   1. [Create an IAM rule](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-service.html). Use the following information.
-		   1. Choose **Rekognition** for the service name
-		   2. Choose **Rekognition** for the service role use case
+		   1. Choose **Rekognition** for the service name.
+		   2. Choose **Rekognition** for the service role use case.
 		   3. Choose the **AmazonRekognitionServiceRole** permissions policy, which gives Amazon Rekognition Video write access to Kinesis data streams that are prefixed with AmazonRekognition and read access to all your Kinesis video streams.
 	2. Note the Amazon Resource Name (ARN) of the service role. You need it to start video analysis operations.
 
@@ -45,38 +45,42 @@ A Kinesis Video Streams Producer is any application that makes it easy to secure
 Amazon offers SDK in two languages: [Java](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-java) and [C ++](https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp). In this example, we will be using the Producer C++ SDK with Docker.
 
 ### Pre-requisite:
-- Docker must be installed and configured . Check official website of how to install docker using [Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [Windows](https://docs.docker.com/docker-for-windows/)
-- (Windows) Due to the complexity of using the webcam in Windows, you must configure an IP address for your camera to do [RTSP](https://pt.wikipedia.org/wiki/RTSP).
-
-###  Install
-- Check Linux [Linux ](https://github.com/samborba/aws-rekognition/tree/master/docker_native_scripts/amazonlinux) or [Windows ](https://github.com/samborba/aws-rekognition/tree/master/docker_native_scripts/windows)tutorial.
+- Docker must be installed and configured. Check official website of how to install docker using [Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [Windows](https://docs.docker.com/docker-for-windows/).
+- (Windows) Due to the complexity of using the webcam in Windows, you must configure an IP address for your camera to be able to [RTSP](https://pt.wikipedia.org/wiki/RTSP).
 
 ## Setting up project code
 
 ### Pre-requisites
-1. Clone project
-2. AWS Environment Configured
+1. Clone project.
+2. AWS Environment configured.
 3. Docker Producer SDK configured.
-4. Vritualenv configured and with dependencies installed
+4. Vritualenv configured and with dependencies installed.
 5. If there is no folder named “**resources**” inside **~/aws-rekognition/src/**, create it and store it with a photo of yourself to be recognized later.
+6. If you're on Windows, make sure you've changed Docker settings to **Windows Container**.
 
 ### Setting it up and running
-1. Populate the **.env.example** file according to the AWS data you set up in [the previous steps](#aws-config).
+1. Populate the **.env.example** file according to the AWS configuration you set up in [the previous steps](#aws-config).
 2. Rename the **.env.example** file to **.env**.
-3. Run Dockerfile to start producer.
-4. Open a terminal in **~/aws-rekognition/src/** and run **consumer.py** file.
+3. Go to **~/aws-rekognition/docker/_native_scripts/<yourOSfodler>** and run Dockerfile to start producer: ```docker -t build <nameofyourchoice> .``` run ```docker image``` to check if build is complete.
+4. Bash your container using ```sudo docker run -it --network="host" --device=/dev/video0 <imagename> /bin/bash``` if you are using Ubuntu or ```docker run -it <IMAGE_ID> <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> <rtsp_url> <streamName>``` for Windows. If you are using Windows, producer will start, after that, skip to the step 8.
+5. (Ubuntu) If GStreamer libs are not installed after you have built Dockerfile, please, run ```./install-script``` (it will take a while).
+6. (Ubuntu) If your region is different from **us-west-2**, you need to create an environment variable named **AWS_DEFAULT_REGION** and assign the value to it according to the region that you configured your AWS.
+7. (Ubuntu) (If you had to manually install **install-script**, go to **opt/kinesis-video-native-build/downloads/local/bin**) Run ```gst-launch-1.0 v4l2src do-timestamp=TRUE device=/dev/video0 ! videoconvert ! video/x-raw,format=I420,width=640,height=480,framerate=30/1 ! x264enc bframes=0 key-int-max=45 bitrate=512 ! h264parse ! video/x-h264,stream-format=avc,alignment=au,width=640,height=480,framerate=30/1,profile=baseline ! kvssink stream-name="YOURSTREAMNAME" access-key=YOURACCESSKEY secret-key=YOURSECRETKEY``` to start producer.
+8. Open a terminal (using your own machine) in **~/aws-rekognition/src/** and run **consumer.py** file.
 ```console
 (env)$ python consumer.py
 ```
-5. If you want to stop all process, just press **Ctrl + Shift + C**.
+9. If you want to stop all process, just press **Ctrl+Shift+C**.
 
-  
 To view the video being streamed in real time, open your Kinesis Video Streams, and to monitor incoming data traffic, open your Kinesis Data Streams.
 
 ### Notes
-- You can integrate any producer (C ++ SDK, Java SDK, GStreamer plugin or OpenCV lib) in this project, the focus is to consume the data coming from Kinesis Data Streams, which consequently collects Kinesis Video Streams.
+- You can integrate any producer (C++ SDK, Java SDK, GStreamer plugin, OpenCV, etc) in this project, the focus is to consume the data coming from Kinesis Data Streams.
 - Because it is an operating system that can sometimes bring certain limitations at the time of development, perhaps you should put more effort into working with the webcam on Windows.
-- At consumer.py, we are only consuming responses from already known faces, if you want additional information about the environment, the unknown face, etc., you must change the code to suit your interests
+- At consumer.py, we are only consuming responses from already known faces, if you want additional information about the environment, the unknown face, etc, you must change the code to suit your interests.
+- Every time you enter the bash of the Linux container you created, you must run the command ```./install-script```, as the GStreamer files are deleted every time you leave the container.
+- Take a look at the LiveReporter app for [iPhone](https://apps.apple.com/app/live-reporter-security-camera/id996017825) and [Android](https://play.google.com/store/apps/details?id=net.kzkysdjpn.live_reporter), this app offers RTSP connection via smartphone camera and it may work (or not).
+- All the Dockerfiles may be outdated any time, feel free to change the code, but do not change the dependencies.
 
 ### Reference
 - [Amazon Rekognition Developer Guide](https://docs.aws.amazon.com/rekognition/latest/dg/rekognition-dg.pdf);
