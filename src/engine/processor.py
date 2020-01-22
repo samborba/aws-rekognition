@@ -1,4 +1,3 @@
-import logging
 import os
 from dotenv import load_dotenv
 import boto3
@@ -32,31 +31,36 @@ class Processor:
     def create(self):
         """Criação do processor."""
         try:
-            print(f'Criando {self.name} processor.')
-
-            self._rekognition_client.create_stream_processor(
-                Input={
-                    'KinesisVideoStream': {
-                        'Arn': _KINESISVIDEO_ARN
-                    }
-                },
-                Output={
-                    'KinesisDataStream': {
-                        'Arn': _KINESISDATA_ARN
-                    }
-                },
-                Name=self.name,
-                Settings={
-                    'FaceSearch': {
-                        'CollectionId': self.collection_id,
-                        'FaceMatchThreshold': 70.0
-                    }
-                },
-                RoleArn=_AWS_KVS_ROLE_ARN
-            )
-            print(f'Processaor {self.name} criado com Sucesso!')
+            if self.status() is not False:
+                print("Processor já existente.")
+                return
+                 
+            else:
+                print(f'Criando {self.name} processor.')
+                self._rekognition_client.create_stream_processor(
+                    Input={
+                        'KinesisVideoStream': {
+                            'Arn': _KINESISVIDEO_ARN
+                        }
+                    },
+                    Output={
+                        'KinesisDataStream': {
+                            'Arn': _KINESISDATA_ARN
+                        }
+                    },
+                    Name=self.name,
+                    Settings={
+                        'FaceSearch': {
+                            'CollectionId': self.collection_id,
+                            'FaceMatchThreshold': 70.0
+                        }
+                    },
+                    RoleArn=_AWS_KVS_ROLE_ARN
+                )
+                print(f'Processaor {self.name} criado com Sucesso!')
         except Exception as error:
             print(error)
+            exit()
 
     def initialize(self):
         """
@@ -101,7 +105,8 @@ class Processor:
         :return: String retorna status do processor.
         """
         try:
-            response = self._rekognition_client.delete_stream_processor(Name=self.name)
+            response = self._rekognition_client.describe_stream_processor(Name=self.name)
             return response.get('Status')
-        except Exception as error:
-            print(error)
+        except:
+            print("Processor não foi criado.")
+            return False
